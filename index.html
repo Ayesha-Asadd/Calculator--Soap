@@ -174,15 +174,24 @@
 </div>
 
 <script>
+/*
+  Calculator behavior:
+  - Numbers and dot build the current input.
+  - Pressing an operator stores the current value and chosen op.
+  - Pressing = sends a SOAP request to the Calculator API (Add/Subtract/Multiply/Divide)
+    with the stored value and current input, then shows the response.
+  - 'C' clears everything.
+  - All operations use the same SOAP API endpoints (so functionality remains unchanged).
+  - NOTE: The SOAP API expects numeric values (integers work best). Division from the API is integer division.
+*/
 
 /* --- Config: CORS proxy and target --- */
 // If you run into CORS issues, use a proxy. Example below uses cors-anywhere.
 // To use cors-anywhere you may need to visit https://cors-anywhere.herokuapp.com/corsdemo and request access.
 const useProxy = true;
-const corsProxy = "https://cors-anywhere.herokuapp.com/"; // testing only
+const corsProxy = "https://corsproxy.io/?";
 const targetUrl = "http://www.dneonline.com/calculator.asmx";
-const soapBaseUrl = (useProxy ? corsProxy : "") + targetUrl;
-
+const soapBaseUrl = (useProxy ? corsProxy + encodeURIComponent(targetUrl) : targetUrl);
 /* --- State --- */
 let displayEl = document.getElementById('display');
 let statusEl = document.getElementById('status');
