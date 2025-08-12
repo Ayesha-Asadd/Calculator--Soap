@@ -192,6 +192,7 @@ const useProxy = true;
 const corsProxy = "https://corsproxy.io/?";
 const targetUrl = "http://www.dneonline.com/calculator.asmx";
 const soapBaseUrl = (useProxy ? corsProxy + encodeURIComponent(targetUrl) : targetUrl);
+
 /* --- State --- */
 let displayEl = document.getElementById('display');
 let statusEl = document.getElementById('status');
