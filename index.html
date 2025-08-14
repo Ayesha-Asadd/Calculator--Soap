@@ -12,7 +12,7 @@
     --btn-shadow: #bebfc1;
     --op-btn:#222;
     --op-text:#fff;
-    --accent:#c62828; /* red for C */
+    --accent:#c62828;
     --display-bg:#f6f7f8;
     --display-text:#222;
   }
@@ -66,7 +66,6 @@
     overflow:hidden;
   }
 
-  /* keypad grid */
  .keys {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
@@ -74,12 +73,11 @@
 }
 
 .zero {
-  grid-column: span 1; /* no longer span 2 */
+  grid-column: span 1;
 }
 
   button.key {
     appearance:none;
-    -webkit-appearance:none;
     border: none;
     outline: none;
     background: var(--btn);
@@ -97,7 +95,6 @@
     box-shadow: 0 1px 0 var(--btn-shadow);
   }
 
-  /* operator column darker */
   button.op {
     background: var(--op-btn);
     color: var(--op-text);
@@ -110,27 +107,18 @@
     box-shadow: 0 3px 0 rgba(0,0,0,0.35);
   }
 
-  
-
-  /* equals button style (dark) */
   .equals {
     background: #333;
     color: white;
     box-shadow: 0 3px 0 rgba(0,0,0,0.6);
   }
 
-  /* small status line */
   .status {
     margin-top:10px;
     text-align:center;
     font-size:12px;
     color:#444;
     min-height:16px;
-  }
-
-  /* responsive touch size */
-  @media (max-width:360px){
-    .wrapper { transform: scale(0.95); }
   }
 </style>
 </head>
@@ -143,77 +131,49 @@
     <div id="display" class="display" aria-live="polite">0</div>
 
     <div class="keys" role="group" aria-label="Calculator keys">
-  <!-- row 1 -->
-  <button class="key clear" id="clear">C</button>
-  <button class="key" data-action="digit" data-value="7">7</button>
-  <button class="key" data-action="digit" data-value="8">8</button>
-  <button class="key op" data-action="op" data-value="/">÷</button>
+      <button class="key clear" id="clear">C</button>
+      <button class="key" data-action="digit" data-value="7">7</button>
+      <button class="key" data-action="digit" data-value="8">8</button>
+      <button class="key op" data-action="op" data-value="/">÷</button>
 
-  <!-- row 2 -->
-  <button class="key" data-action="digit" data-value="4">4</button>
-  <button class="key" data-action="digit" data-value="5">5</button>
-  <button class="key" data-action="digit" data-value="6">6</button>
-  <button class="key op" data-action="op" data-value="*">×</button>
+      <button class="key" data-action="digit" data-value="4">4</button>
+      <button class="key" data-action="digit" data-value="5">5</button>
+      <button class="key" data-action="digit" data-value="6">6</button>
+      <button class="key op" data-action="op" data-value="*">×</button>
 
-  <!-- row 3 -->
-  <button class="key" data-action="digit" data-value="1">1</button>
-  <button class="key" data-action="digit" data-value="2">2</button>
-  <button class="key" data-action="digit" data-value="3">3</button>
-  <button class="key op" data-action="op" data-value="-">−</button>
+      <button class="key" data-action="digit" data-value="1">1</button>
+      <button class="key" data-action="digit" data-value="2">2</button>
+      <button class="key" data-action="digit" data-value="3">3</button>
+      <button class="key op" data-action="op" data-value="-">−</button>
 
-  <!-- row 4 (modified) -->
-  <button class="key zero" data-action="digit" data-value="0">0</button>
-  <button class="key" data-action="dot" data-value=".">.</button>
-  <button class="key equals" id="equals" data-action="equals">=</button>
-  <button class="key op" data-action="op" data-value="+">+</button>
-</div>
+      <button class="key zero" data-action="digit" data-value="0">0</button>
+      <button class="key" data-action="dot" data-value=".">.</button>
+      <button class="key equals" id="equals" data-action="equals">=</button>
+      <button class="key op" data-action="op" data-value="+">+</button>
+    </div>
 
-
-    <div class="status" id="status" aria-hidden="false"></div>
+    <div class="status" id="status"></div>
   </div>
 </div>
 
 <script>
-/*
-  Calculator behavior:
-  - Numbers and dot build the current input.
-  - Pressing an operator stores the current value and chosen op.
-  - Pressing = sends a SOAP request to the Calculator API (Add/Subtract/Multiply/Divide)
-    with the stored value and current input, then shows the response.
-  - 'C' clears everything.
-  - All operations use the same SOAP API endpoints (so functionality remains unchanged).
-  - NOTE: The SOAP API expects numeric values (integers work best). Division from the API is integer division.
-*/
-
-/* --- Config: CORS proxy and target --- */
-// If you run into CORS issues, use a proxy. Example below uses cors-anywhere.
-// To use cors-anywhere you may need to visit https://cors-anywhere.herokuapp.com/corsdemo and request access.
-const useProxy = true;
-const corsProxy = "https://corsproxy.io/?";
+const corsProxy = "https://cors-anywhere.herokuapp.com/";
 const targetUrl = "http://www.dneonline.com/calculator.asmx";
-const soapBaseUrl = (useProxy ? corsProxy + encodeURIComponent(targetUrl) : targetUrl);
+const soapBaseUrl = corsProxy + targetUrl;
 
-/* --- State --- */
 let displayEl = document.getElementById('display');
 let statusEl = document.getElementById('status');
 
-let currentInput = "0";       // string for the number being entered
-let storedValue = null;       // string or number stored when op is pressed
-let pendingOp = null;         // one of: Add, Subtract, Multiply, Divide
-let entering = true;          // true when building a number
+let currentInput = "0";
+let storedValue = null;
+let pendingOp = null;
+let entering = true;
 
-/* helpers */
 function updateDisplay(text) {
-  // limit length
   const str = String(text);
-  if (str.length > 12) {
-    displayEl.textContent = Number(str).toPrecision(10);
-  } else {
-    displayEl.textContent = str;
-  }
+  displayEl.textContent = str.length > 12 ? Number(str).toPrecision(10) : str;
 }
 
-/* map operator symbol to SOAP operation name */
 function opToSoap(opSymbol){
   switch(opSymbol){
     case '+': return 'Add';
@@ -224,7 +184,6 @@ function opToSoap(opSymbol){
   }
 }
 
-/* build SOAP XML body */
 function buildSoapEnvelope(operation, a, b){
   return `<?xml version="1.0" encoding="utf-8"?>
   <soap:Envelope xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
@@ -239,7 +198,6 @@ function buildSoapEnvelope(operation, a, b){
   </soap:Envelope>`;
 }
 
-/* send SOAP POST and parse result */
 async function callSoapOperation(operationName, a, b){
   statusEl.textContent = '⏳ Fetching...';
   try {
@@ -253,17 +211,14 @@ async function callSoapOperation(operationName, a, b){
       body: body
     });
 
-    if(!resp.ok){
-      throw new Error('HTTP ' + resp.status);
-    }
+    if(!resp.ok) throw new Error('HTTP ' + resp.status);
 
     const text = await resp.text();
     const parser = new DOMParser();
     const xml = parser.parseFromString(text, "text/xml");
     const tag = xml.getElementsByTagName(`${operationName}Result`)[0];
-    if(!tag){
-      throw new Error('Invalid SOAP response');
-    }
+    if(!tag) throw new Error('Invalid SOAP response');
+
     statusEl.textContent = '✔ Done';
     return tag.textContent;
   } catch (err){
@@ -272,7 +227,6 @@ async function callSoapOperation(operationName, a, b){
   }
 }
 
-/* number button pressed */
 function onDigit(d){
   if(!entering){
     currentInput = d === '.' ? '0.' : d;
@@ -280,21 +234,17 @@ function onDigit(d){
   } else {
     if(d === '.' && currentInput.includes('.')) return;
     if(currentInput === '0' && d !== '.') currentInput = d;
-    else currentInput = currentInput + d;
+    else currentInput += d;
   }
   updateDisplay(currentInput);
 }
 
-/* operator pressed */
 function onOperator(sym){
-  // if user presses op in succession, just update op
   if(pendingOp && !entering){
     pendingOp = sym;
     statusEl.textContent = `Op set to ${sym}`;
     return;
   }
-
-  // store current input
   storedValue = currentInput;
   pendingOp = sym;
   entering = false;
@@ -302,40 +252,26 @@ function onOperator(sym){
   updateDisplay(sym);
 }
 
-/* equals pressed */
 async function onEquals(){
   if(!pendingOp || storedValue === null){
     statusEl.textContent = '⚠ No operation selected';
     return;
   }
-
-  // Use storedValue and currentInput as operands
-  // SOAP service expects numbers (use as-is). We'll pass them as-is; API uses integer semantics.
   const opName = opToSoap(pendingOp);
   if(!opName){
     statusEl.textContent = '⚠ Unsupported op';
     return;
   }
-
-  // show interim
-  statusEl.textContent = '⏳ Sending to SOAP...';
   try {
-    // send numbers — trim to avoid huge strings
-    const a = storedValue;
-    const b = currentInput;
-    const result = await callSoapOperation(opName, a, b);
+    const result = await callSoapOperation(opName, storedValue, currentInput);
     currentInput = String(result);
     updateDisplay(currentInput);
-    // clear pending
     storedValue = null;
     pendingOp = null;
     entering = false;
-  } catch (err){
-    // error already set in status
-  }
+  } catch {}
 }
 
-/* clear */
 function onClear(){
   currentInput = "0";
   storedValue = null;
@@ -345,35 +281,18 @@ function onClear(){
   statusEl.textContent = '';
 }
 
-/* wire buttons */
 document.querySelectorAll('button.key').forEach(btn => {
-  btn.addEventListener('click', (e) => {
+  btn.addEventListener('click', () => {
     const action = btn.dataset.action;
     const value = btn.dataset.value;
-    if(action === 'digit'){
-      onDigit(value);
-    } else if (action === 'dot'){
-      onDigit('.');
-    } else if (action === 'op'){
-      onOperator(value);
-    } else if (action === 'equals'){
-      onEquals();
-    } else if (btn.id === 'clear'){
-      onClear();
-    }
-  });
-
-  // also support touch (fast)
-  btn.addEventListener('touchstart', (ev) => {
-    ev.preventDefault(); // prevent mouse event duplication
-    btn.classList.add('pressed');
-  }, {passive:false});
-  btn.addEventListener('touchend', (ev) => {
-    btn.classList.remove('pressed');
+    if(action === 'digit') onDigit(value);
+    else if (action === 'dot') onDigit('.');
+    else if (action === 'op') onOperator(value);
+    else if (action === 'equals') onEquals();
+    else if (btn.id === 'clear') onClear();
   });
 });
 
-/* initialize */
 updateDisplay(currentInput);
 statusEl.textContent = 'Ready';
 </script>
