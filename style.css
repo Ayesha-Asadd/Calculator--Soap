@@ -1,0 +1,115 @@
+ :root{
+    --bg:#3b3b3b;
+    --panel:#dfe1e3;
+    --btn:#ffffff;
+    --btn-shadow: #bebfc1;
+    --op-btn:#222;
+    --op-text:#fff;
+    --accent:#c62828;
+    --display-bg:#f6f7f8;
+    --display-text:#222;
+  }
+
+  html,body{
+    height:100%;
+    margin:0;
+    font-family: "Helvetica Neue", Arial, sans-serif;
+    background: #2f2f2f;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+  }
+
+  .wrapper{
+    width: 260px;
+    background: linear-gradient(#bfc3c7, #e6e7e8);
+    border-radius: 10px;
+    padding: 18px;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.45), inset 0 2px 0 rgba(255,255,255,0.6);
+  }
+
+  h1.title{
+    margin:0 0 10px 0;
+    font-size:18px;
+    text-align:center;
+    color:#333;
+    letter-spacing:0.6px;
+    font-weight:700;
+  }
+
+  .calc {
+    background: var(--panel);
+    border-radius: 8px;
+    padding: 12px;
+    box-shadow: inset 0 -4px 8px rgba(0,0,0,0.08);
+  }
+
+  .display {
+    height:44px;
+    background: var(--display-bg);
+    border-radius:6px;
+    box-shadow: inset 0 2px 6px rgba(0,0,0,0.12);
+    display:flex;
+    align-items:center;
+    justify-content:flex-end;
+    padding: 6px 12px;
+    font-size:24px;
+    color: var(--display-text);
+    margin-bottom:12px;
+    overflow:hidden;
+  }
+
+ .keys {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+}
+
+.zero {
+  grid-column: span 1;
+}
+
+  button.key {
+    appearance:none;
+    border: none;
+    outline: none;
+    background: var(--btn);
+    height:46px;
+    border-radius:6px;
+    box-shadow: 0 3px 0 var(--btn-shadow), inset 0 1px 0 rgba(255,255,255,0.6);
+    font-size:18px;
+    font-weight:700;
+    color:#222;
+    touch-action: manipulation;
+  }
+
+  button.key:active{
+    transform: translateY(2px);
+    box-shadow: 0 1px 0 var(--btn-shadow);
+  }
+
+  button.op {
+    background: var(--op-btn);
+    color: var(--op-text);
+    box-shadow: 0 3px 0 rgba(0,0,0,0.6);
+  }
+
+  button.clear {
+    background: var(--accent);
+    color: white;
+    box-shadow: 0 3px 0 rgba(0,0,0,0.35);
+  }
+
+  .equals {
+    background: #333;
+    color: white;
+    box-shadow: 0 3px 0 rgba(0,0,0,0.6);
+  }
+
+  .status {
+    margin-top:10px;
+    text-align:center;
+    font-size:12px;
+    color:#444;
+    min-height:16px;
+  }
