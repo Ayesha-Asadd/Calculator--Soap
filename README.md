@@ -59,18 +59,17 @@ Built with **HTML, CSS, and JavaScript**, it’s a beginner-friendly and SEO-opt
 ---
 
 ## 🚀 Getting Started
-
+````
 1. **Clone the Repository**
    ```bash
    git clone https://github.com/YourUsername/Calculator-SOAP-API.git
 ````
-
+````
 2. **Open `index.html` in Browser**
 
    * No local server required.
    * For deployment, host on **GitHub Pages**, **Netlify**, or any static hosting service.
 
----
 ````
 ## 📚 WSDL Information
 
