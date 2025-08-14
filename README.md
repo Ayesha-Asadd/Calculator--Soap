@@ -2,11 +2,6 @@
 
 Basic Arithmetic Operations via WSDL – A Practical SOAP Web Service Integration
 
-![Stars](https://img.shields.io/github/stars/YourUsername/Calculator-SOAP-API?style=flat) 
-![Forks](https://img.shields.io/github/forks/YourUsername/Calculator-SOAP-API?style=flat) 
-![Issues](https://img.shields.io/github/issues/YourUsername/Calculator-SOAP-API?color=green) 
-![License](https://img.shields.io/badge/license-MIT-blue)
-
 ---
 
 ## 📖 About The Project
@@ -122,6 +117,4 @@ This project is licensed under the **MIT License** – see the [LICENSE](LICENSE
 
 ## 💡 Author
 
-Developed by **[Ayesha Mukhtar Asad]** 
-
-```
+Developed by **Ayesha Mukhtar Asad** 
